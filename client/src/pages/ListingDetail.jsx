@@ -181,19 +181,29 @@ function ListingDetailView({ id }) {
               </div>
             )}
           </div>
-          <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
+          <div className="relative z-10 mt-3 flex gap-2 overflow-x-auto px-1 py-1 pb-2">
             {images.map((src, i) => {
               if (failedImages.includes(src)) return null;
               return (
-              <button key={src + i} type="button" onClick={() => setIdx(i)} className="shrink-0">
+              <button
+                key={src + i}
+                type="button"
+                onClick={() => setIdx(i)}
+                aria-label={`View photo ${i + 1}`}
+                aria-pressed={i === idx}
+                className={`relative box-border h-[76px] w-[104px] shrink-0 overflow-hidden rounded-lg border-2 bg-white transition-all focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-forest/30 ${
+                  i === idx
+                    ? 'border-forest shadow-[0_0_0_2px_rgba(31,91,68,0.28),0_4px_10px_rgba(31,45,38,0.2)]'
+                    : 'border-sand opacity-80 hover:border-forest/60 hover:opacity-100'
+                }`}
+              >
                 <SafeImage
                   src={src}
                   alt=""
-                  className={`h-16 w-24 rounded-lg object-cover transition-all ${
-                    i === idx ? 'ring-2 ring-forest scale-[1.03]' : 'opacity-70 hover:opacity-100'
-                  }`}
+                  className="block h-full w-full object-cover"
                   onUnavailable={() => handleGalleryImageUnavailable(src)}
                 />
+                {i === idx && <span className="absolute inset-x-0 bottom-0 h-1 bg-forest" aria-hidden="true" />}
               </button>
               );
             })}
