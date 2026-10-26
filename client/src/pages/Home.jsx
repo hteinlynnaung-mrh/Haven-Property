@@ -30,7 +30,10 @@ export function Home() {
 
   return (
     <div>
-      <section className="relative overflow-hidden bg-[linear-gradient(135deg,_#f4efe6_0%,_#e7dfd2_58%,_#dce9df_100%)] text-ink">
+      <section
+        className="relative overflow-hidden bg-cream bg-[linear-gradient(90deg,_rgba(244,239,230,0.98)_0%,_rgba(244,239,230,0.9)_42%,_rgba(220,233,223,0.72)_100%),url('/images/modern-building-overlay.svg')] bg-cover bg-center text-ink"
+        aria-label="Haven Property modern building introduction"
+      >
         <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 md:py-24">
           <p className="text-sm uppercase tracking-[0.2em] text-ink/60">Property classifieds for real homes</p>
           <h1 className="mt-3 max-w-2xl font-serif text-4xl leading-tight md:text-6xl">
