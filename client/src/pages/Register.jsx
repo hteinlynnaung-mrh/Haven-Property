@@ -35,7 +35,7 @@ export function Register() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-16">
-      <h1 className="font-serif text-4xl">Join Haven</h1>
+      <h1 className="font-serif text-4xl">Join Haven Property</h1>
       <p className="mt-2 text-ink/60">Browse as a buyer, or list homes as an owner.</p>
       <form className="mt-8 space-y-3" onSubmit={submit}>
         <input

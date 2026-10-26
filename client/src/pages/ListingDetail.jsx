@@ -4,9 +4,16 @@ import { AMENITY_LABELS, api, formatAddress, formatPrice } from '../api.js';
 import { useAuth } from '../auth.jsx';
 import { useToast } from '../toast.jsx';
 import { ListingCard } from '../ListingCard.jsx';
+import { SafeImage } from '../components/SafeImage.jsx';
+
+const DEFAULT_PROPERTY_IMAGE = '/images/property-placeholder.svg';
 
 export function ListingDetail() {
   const { id } = useParams();
+  return <ListingDetailView key={id} id={id} />;
+}
+
+function ListingDetailView({ id }) {
   const { user } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
@@ -17,6 +24,7 @@ export function ListingDetail() {
   const [sending, setSending] = useState(false);
   const [similar, setSimilar] = useState([]);
   const [lightbox, setLightbox] = useState(false);
+  const [failedImages, setFailedImages] = useState([]);
 
   // Mortgage Calculator State (for sale)
   const [downPercent, setDownPercent] = useState(20);
@@ -24,25 +32,39 @@ export function ListingDetail() {
   const [interestRate, setInterestRate] = useState(6.5);
 
   useEffect(() => {
+    window.scrollTo(0, 0);
+    let cancelled = false;
     api(`/api/listings/${id}`)
       .then((d) => {
+        if (cancelled) return;
         setListing(d.listing);
         setForm((f) => ({
           ...f,
-          name: user?.name || '',
-          email: user?.email || '',
-          phone: user?.phone || '',
+          name: user?.name || f.name,
+          email: user?.email || f.email,
+          phone: user?.phone || f.phone,
         }));
 
-        // Fetch similar listings in same city/type
-        api(`/api/listings?city=${encodeURIComponent(d.listing.city)}&listingType=${d.listing.listingType}&pageSize=4`)
+        const currentId = Number(d.listing.id);
+        api(`/api/listings?city=${encodeURIComponent(d.listing.city)}&listingType=${d.listing.listingType}&pageSize=8`)
           .then((res) => {
-            setSimilar((res.items || []).filter((item) => item.id !== d.listing.id).slice(0, 3));
+            if (cancelled) return;
+            setSimilar(
+              (res.items || [])
+                .filter((item) => Number(item.id) !== currentId)
+                .slice(0, 3)
+            );
           })
           .catch(() => {});
       })
-      .catch((e) => setError(e.message));
-  }, [id, user]);
+      .catch((e) => {
+        if (!cancelled) setError(e.message);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
 
   const mortgageCalc = useMemo(() => {
     if (!listing || listing.listingType !== 'sale') return null;
@@ -83,8 +105,22 @@ export function ListingDetail() {
   }
   if (!listing) return <p className="p-10 text-center text-ink/50">Loading listing…</p>;
 
-  const images = listing.imageUrls || [];
+  const images = [
+    listing.imageUrl,
+    listing.image,
+    ...(Array.isArray(listing.imageUrls) ? listing.imageUrls : []),
+    ...(Array.isArray(listing.images) ? listing.images : []),
+  ]
+    .filter((src, index, all) => typeof src === 'string' && src.trim() && src !== DEFAULT_PROPERTY_IMAGE && all.indexOf(src) === index);
+  const activeImage = images[idx] || DEFAULT_PROPERTY_IMAGE;
   const pricePerSqft = listing.areaSqft ? Math.round(listing.price / listing.areaSqft) : null;
+
+  function handleGalleryImageUnavailable(src) {
+    if (src === DEFAULT_PROPERTY_IMAGE) return;
+    setFailedImages((current) => (current.includes(src) ? current : [...current, src]));
+    const nextIndex = images.findIndex((image, imageIndex) => imageIndex > idx && !failedImages.includes(image));
+    if (nextIndex >= 0) setIdx(nextIndex);
+  }
 
   async function toggleSave() {
     if (!user) return navigate('/login', { state: { from: `/listings/${listing.id}` } });
@@ -132,11 +168,13 @@ export function ListingDetail() {
             className="group relative overflow-hidden rounded-2xl bg-sand cursor-pointer"
             onClick={() => images.length > 0 && setLightbox(true)}
           >
-            {images[idx] ? (
-              <img src={images[idx]} alt="" className="aspect-[16/10] w-full object-cover group-hover:scale-[1.02] transition-transform duration-300" />
-            ) : (
-              <div className="flex aspect-[16/10] w-full items-center justify-center text-sm text-ink/40">No photo</div>
-            )}
+            <SafeImage
+              src={failedImages.includes(activeImage) ? DEFAULT_PROPERTY_IMAGE : activeImage}
+              alt={listing.title}
+              className="aspect-[16/10] w-full object-cover group-hover:scale-[1.02] transition-transform duration-300"
+              fallback={<div className="flex aspect-[16/10] w-full items-center justify-center bg-sand text-sm text-ink/40">Photo unavailable</div>}
+              onUnavailable={() => handleGalleryImageUnavailable(activeImage)}
+            />
             {images.length > 0 && (
               <div className="absolute bottom-3 right-3 rounded-full bg-ink/70 px-3 py-1 text-xs text-white backdrop-blur">
                 Click to view full photo ({idx + 1}/{images.length})
@@ -144,17 +182,21 @@ export function ListingDetail() {
             )}
           </div>
           <div className="mt-3 flex gap-2 overflow-x-auto pb-1">
-            {images.map((src, i) => (
+            {images.map((src, i) => {
+              if (failedImages.includes(src)) return null;
+              return (
               <button key={src + i} type="button" onClick={() => setIdx(i)} className="shrink-0">
-                <img
+                <SafeImage
                   src={src}
                   alt=""
                   className={`h-16 w-24 rounded-lg object-cover transition-all ${
                     i === idx ? 'ring-2 ring-forest scale-[1.03]' : 'opacity-70 hover:opacity-100'
                   }`}
+                  onUnavailable={() => handleGalleryImageUnavailable(src)}
                 />
               </button>
-            ))}
+              );
+            })}
           </div>
         </div>
 
@@ -451,7 +493,7 @@ export function ListingDetail() {
           onClick={() => setLightbox(false)}
         >
           <div className="relative max-h-screen max-w-5xl" onClick={(e) => e.stopPropagation()}>
-            <img src={images[idx]} alt="" className="max-h-[85vh] w-auto rounded-xl object-contain shadow-2xl" />
+            <SafeImage src={failedImages.includes(activeImage) ? DEFAULT_PROPERTY_IMAGE : activeImage} alt={listing.title} className="max-h-[85vh] w-auto rounded-xl object-contain shadow-2xl" fallback={<p className="rounded-xl bg-white px-6 py-4 text-ink">Photo unavailable</p>} onUnavailable={() => handleGalleryImageUnavailable(activeImage)} />
             <button
               type="button"
               onClick={() => setLightbox(false)}

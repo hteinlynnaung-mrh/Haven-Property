@@ -1,4 +1,4 @@
-# Haven — property classifieds
+# Haven Property — property classifieds
 
 Owner-listed homes for **rent** and **sale**. Buyers browse, save, and inquire. Owners manage listings from a private dashboard.
 

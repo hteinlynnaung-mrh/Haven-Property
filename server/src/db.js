@@ -8,6 +8,7 @@ dotenv.config();
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dbPath = path.resolve(__dirname, '..', process.env.DATABASE_PATH || './data/property.db');
+const DEFAULT_LISTING_IMAGE = 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1400&q=80';
 
 fs.mkdirSync(path.dirname(dbPath), { recursive: true });
 
@@ -127,7 +128,10 @@ export function mapListing(row, extras = {}) {
     parking: row.parking,
     furnished: Boolean(row.furnished),
     amenities: parseJson(row.amenities, []),
-    imageUrls: parseJson(row.image_urls, []),
+    imageUrls: (() => {
+      const images = parseJson(row.image_urls, []);
+      return Array.isArray(images) && images.length ? images : [DEFAULT_LISTING_IMAGE];
+    })(),
     contactName: row.contact_name,
     contactPhone: row.contact_phone,
     contactEmail: row.contact_email,

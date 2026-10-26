@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 900" role="img" aria-labelledby="title desc">
+  <title id="title">Property placeholder</title>
+  <desc id="desc">A simple architectural house illustration used when a listing photo is unavailable.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#e7dfd2" />
+      <stop offset="1" stop-color="#c9ddcf" />
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="900" fill="url(#sky)" />
+  <circle cx="940" cy="190" r="78" fill="#d5a45f" opacity=".75" />
+  <path d="M0 690c210-85 350-78 555 0 214 81 411 88 645 0v210H0Z" fill="#8fbd8f" opacity=".55" />
+  <path d="m220 535 300-240 350 240" fill="#f4efe6" stroke="#1f4d3a" stroke-linejoin="round" stroke-width="16" />
+  <path d="M300 510h445v260H300z" fill="#f4efe6" stroke="#1f4d3a" stroke-width="14" />
+  <path d="M365 580h125v190H365zM555 580h125v190H555z" fill="#c9ddcf" stroke="#1f4d3a" stroke-width="12" />
+  <path d="M427 580v190M617 580v190M300 690h445" stroke="#1f4d3a" stroke-width="10" />
+  <path d="M220 770h630" stroke="#d5a45f" stroke-linecap="round" stroke-width="14" />
+</svg>

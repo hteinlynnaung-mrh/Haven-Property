@@ -30,9 +30,9 @@ export function Home() {
 
   return (
     <div>
-      <section className="bg-forest text-cream">
-        <div className="mx-auto max-w-6xl px-4 py-16 md:py-24">
-          <p className="text-sm uppercase tracking-[0.2em] text-cream/70">Classifieds for real homes</p>
+      <section className="relative overflow-hidden bg-[linear-gradient(135deg,_#f4efe6_0%,_#e7dfd2_58%,_#dce9df_100%)] text-ink">
+        <div className="relative z-10 mx-auto max-w-6xl px-4 py-16 md:py-24">
+          <p className="text-sm uppercase tracking-[0.2em] text-ink/60">Property classifieds for real homes</p>
           <h1 className="mt-3 max-w-2xl font-serif text-4xl leading-tight md:text-6xl">
             Find a place to rent or buy — straight from the owner.
           </h1>
@@ -56,13 +56,13 @@ export function Home() {
             </button>
           </form>
           <div className="mt-6 flex flex-wrap gap-3">
-            <Link to="/listings?listingType=rent" className="rounded-full border border-cream/40 px-4 py-1.5 text-sm">
+            <Link to="/listings?listingType=rent" className="rounded-full border border-forest/30 text-forest px-4 py-1.5 text-sm">
               Browse rentals
             </Link>
-            <Link to="/listings?listingType=sale" className="rounded-full border border-cream/40 px-4 py-1.5 text-sm">
+            <Link to="/listings?listingType=sale" className="rounded-full border border-forest/30 text-forest px-4 py-1.5 text-sm">
               Homes for sale
             </Link>
-            <Link to="/register?role=owner" className="rounded-full bg-cream/15 px-4 py-1.5 text-sm">
+            <Link to="/register?role=owner" className="rounded-full bg-forest/10 text-forest px-4 py-1.5 text-sm">
               List your property
             </Link>
           </div>

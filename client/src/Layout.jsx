@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from './auth.jsx';
+import { BrandLogo } from './components/BrandLogo.jsx';
 
 const link = 'text-sm font-medium text-ink/70 hover:text-forest transition-colors';
 const active = 'text-forest font-semibold';
@@ -21,9 +22,7 @@ export function Layout() {
     <div className="min-h-screen flex flex-col">
       <header className="border-b border-sand bg-cream/90 backdrop-blur sticky top-0 z-40">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-4">
-          <NavLink to="/" className="font-serif text-2xl font-semibold text-forest">
-            Haven
-          </NavLink>
+          <NavLink to="/" className="text-forest"><BrandLogo /></NavLink>
           <nav className="hidden items-center gap-6 md:flex">
             <NavLink to="/listings" className={isBrowse ? `${link} ${active}` : link}>
               Browse
@@ -144,7 +143,7 @@ export function Layout() {
         <Outlet />
       </main>
       <footer className="border-t border-sand py-8 text-center text-sm text-ink/50">
-        Haven classifieds · Rent and buy homes from the people who own them
+        Haven Property · Rent and buy homes from the people who own them
       </footer>
     </div>
   );
