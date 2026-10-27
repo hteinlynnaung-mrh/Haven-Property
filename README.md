@@ -20,6 +20,31 @@ npm run dev
 - App: http://localhost:5173
 - API: http://localhost:4001
 
+## Run with Docker
+
+Build and start the production container with Compose:
+
+```bash
+docker compose up -d --build
+```
+
+Open http://localhost:4001. Demo data is loaded automatically the first time
+the container starts, and the named volume keeps the SQLite database between
+restarts. Stop it with:
+
+```bash
+docker compose down
+```
+
+To reset the demo data, remove the volume and start again:
+
+```bash
+docker compose down -v
+docker compose up -d --build
+```
+
+For local development, continue using `npm run dev` as described above.
+
 ## Demo accounts
 
 Password for every seeded user: `Password123!`

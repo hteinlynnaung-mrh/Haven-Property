@@ -1,0 +1,20 @@
+services:
+  haven-property:
+    build:
+      context: .
+    image: haven-property
+    ports:
+      - "4001:4001"
+    environment:
+      NODE_ENV: production
+      PORT: 4001
+      CLIENT_ORIGIN: http://localhost:4001
+      DATABASE_PATH: /data/property.db
+      COOKIE_SECURE: "false"
+      JWT_SECRET: ${JWT_SECRET:-change-this-secret-in-production}
+    volumes:
+      - haven-property-data:/data
+    restart: unless-stopped
+
+volumes:
+  haven-property-data:

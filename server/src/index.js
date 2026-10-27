@@ -1,4 +1,7 @@
 import express from 'express';
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
@@ -28,6 +31,15 @@ app.use('/api/auth', authRouter);
 app.use('/api/listings', listingsRouter);
 app.use('/api/owner', ownerRouter);
 app.use('/api/me', meRouter);
+
+// In production the Docker image places the Vite build beside the server.
+// Keeping this optional lets the API continue to run normally during local development.
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const clientDist = path.resolve(__dirname, '../../client/dist');
+if (fs.existsSync(clientDist)) {
+  app.use(express.static(clientDist));
+  app.get('*', (_req, res) => res.sendFile(path.join(clientDist, 'index.html')));
+}
 
 app.use((err, _req, res, _next) => {
   console.error(err);
